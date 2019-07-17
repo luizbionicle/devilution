@@ -2,7 +2,7 @@
 #include "../3rdParty/Storm/Source/storm.h"
 #include "../DiabloUI/diabloui.h"
 
-BOOLEAN gbSomebodyWonGameKludge; // weak
+BOOLEAN gbSomebodyWonGameKludge;
 #ifdef _DEBUG
 DWORD gdwHistTicks;
 #endif
@@ -12,22 +12,22 @@ WORD sgwPackPlrOffsetTbl[MAX_PLRS];
 PkPlayerStruct netplr[MAX_PLRS];
 BOOLEAN sgbPlayerTurnBitTbl[MAX_PLRS];
 BOOLEAN sgbPlayerLeftGameTbl[MAX_PLRS];
-int sgbSentThisCycle; // idb
+int sgbSentThisCycle;
 BOOL gbShouldValidatePackage;
-BYTE gbActivePlayers; // weak
+BYTE gbActivePlayers;
 BOOLEAN gbGameDestroyed;
 BOOLEAN sgbSendDeltaTbl[MAX_PLRS];
 _gamedata sgGameInitInfo;
-char byte_678640;    // weak
-int sglTimeoutStart; // weak
+char byte_678640;
+int sglTimeoutStart;
 int sgdwPlayerLeftReasonTbl[MAX_PLRS];
 TBuffer sgLoPriBuf;
-unsigned int sgdwGameLoops; // idb
+unsigned int sgdwGameLoops;
 BYTE gbMaxPlayers;
 BOOLEAN sgbTimeout;
 char szPlayerName[128];
 BYTE gbDeltaSender;
-BOOL sgbNetInited; // weak
+BOOL sgbNetInited;
 int player_state[MAX_PLRS];
 
 const int event_types[3] = {
@@ -151,7 +151,6 @@ void NetSendHiPri(BYTE *pbMsg, BYTE bLen)
 			nthread_terminate_game("SNetSendMessage");
 	}
 }
-// 679760: using guessed type int gdwNormalMsgSize;
 
 BYTE *multi_recv_packet(TBuffer *packet, BYTE *body, int *size)
 {
@@ -425,9 +424,6 @@ void multi_begin_timeout()
 		multi_check_drop_player();
 	}
 }
-// 67862D: using guessed type char gbGameDestroyed;
-// 678644: using guessed type int sglTimeoutStart;
-// 679661: using guessed type char sgbTimeout;
 
 void multi_check_drop_player()
 {
@@ -510,8 +506,6 @@ void multi_process_network_packets()
 	if (SErrGetLastError() != STORM_ERROR_NO_MESSAGES_WAITING)
 		nthread_terminate_game("SNetReceiveMsg");
 }
-// 676194: using guessed type char gbBufferMsgs;
-// 676198: using guessed type int pkt_counter;
 
 void multi_handle_all_packets(int pnum, BYTE *pData, int nSize)
 {
@@ -572,7 +566,6 @@ void multi_send_zero_packet(DWORD pnum, char a2, void *pbSrc, DWORD dwLen)
 		v5 += *(WORD *)&pkt.body[3];
 	}
 }
-// 67975C: using guessed type int gdwLargestMsgSize;
 
 void NetClose()
 {
@@ -681,7 +674,7 @@ BOOL NetInit(BOOL bSinglePlayer, BOOL *pfExitProgram)
 		UiData.getdatacallback = (void (*)())UiGetDataCallback;
 		UiData.categorycallback = (void (*)())UiCategoryCallback;
 		UiData.selectnamecallback = mainmenu_select_hero_dialog;
-		UiData.changenamecallback = (void (*)())mainmenu_create_hero;
+		UiData.changenamecallback = (void (*)())mainmenu_change_name;
 		UiData.profilebitmapcallback = (void (*)())UiProfileDraw;
 		UiData.profilecallback = (void (*)())UiProfileCallback;
 		UiData.profilefields = UiProfileGetString();
@@ -734,7 +727,7 @@ BOOL NetInit(BOOL bSinglePlayer, BOOL *pfExitProgram)
 
 	for (i = 0; i < 17; i++) {
 		glSeedTbl[i] = GetRndSeed();
-		gnLevelTypeTbl[i] = InitNewSeed(i);
+		gnLevelTypeTbl[i] = InitLevelType(i);
 	}
 	if (!SNetGetGameInfo(GAMEINFO_NAME, szPlayerName, 128, &len))
 		nthread_terminate_game("SNetGetGameInfo1");
@@ -758,15 +751,15 @@ void multi_send_pinfo(int pnum, char cmd)
 	dthread_send_delta(pnum, cmd, &pkplr, sizeof(pkplr));
 }
 
-int InitNewSeed(int newseed)
+int InitLevelType(int l)
 {
-	if (newseed == 0)
+	if (l == 0)
 		return 0;
-	if (newseed >= 1 && newseed <= 4)
+	if (l >= 1 && l <= 4)
 		return 1;
-	if (newseed >= 5 && newseed <= 8)
+	if (l >= 5 && l <= 8)
 		return 2;
-	if (newseed >= 9 && newseed <= 12)
+	if (l >= 9 && l <= 12)
 		return 3;
 
 	return 4;

@@ -2,17 +2,17 @@
 #ifndef __MULTI_H__
 #define __MULTI_H__
 
-extern BOOLEAN gbSomebodyWonGameKludge; // weak
+extern BOOLEAN gbSomebodyWonGameKludge;
 extern char szPlayerDescript[128];
 extern WORD sgwPackPlrOffsetTbl[MAX_PLRS];
 extern PkPlayerStruct netplr[MAX_PLRS];
 extern BOOL gbShouldValidatePackage;
 extern BYTE gbActivePlayers;
-extern BOOLEAN gbGameDestroyed; // weak
-extern char byte_678640;     // weak
+extern BOOLEAN gbGameDestroyed;
+extern char byte_678640;
 extern BYTE gbMaxPlayers;
 extern char szPlayerName[128];
-extern BYTE gbDeltaSender; // weak
+extern BYTE gbDeltaSender;
 extern int player_state[MAX_PLRS];
 
 #ifdef _DEBUG
@@ -48,7 +48,7 @@ void __stdcall multi_handle_events(_SNETEVENT *pEvt);
 BOOL NetInit(BOOL bSinglePlayer, BOOL *pfExitProgram);
 void buffer_init(TBuffer *pBuf);
 void multi_send_pinfo(int pnum, char cmd);
-int InitNewSeed(int newseed);
+int InitLevelType(int l);
 void SetupLocalCoords();
 BOOL multi_init_single(_SNETPROGRAMDATA *client_info, _SNETPLAYERDATA *user_info, _SNETUIDATA *ui_info);
 BOOL multi_init_multi(_SNETPROGRAMDATA *client_info, _SNETPLAYERDATA *user_info, _SNETUIDATA *ui_info, int *pfExitProgram);
@@ -57,7 +57,6 @@ void recv_plrinfo(int pnum, TCmdPlrInfoHdr *p, BOOL recv);
 
 /* rdata */
 
-extern const int multi_inf; // weak
 extern const int event_types[3];
 
 #endif /* __MULTI_H__ */

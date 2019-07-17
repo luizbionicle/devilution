@@ -2266,6 +2266,13 @@ typedef enum _mainmenu_selections {
 	MAINMENU_ATTRACT_MODE  = 6,
 } _mainmenu_selections;
 
+typedef enum dlgresults
+{
+	NEW_GAME = 0,
+	LOAD_GAME = 2,
+	EXIT_MENU = 4,
+} dlgresults;
+
 typedef enum panel_button_id {
 	PANBTN_CHARINFO  = 0,
 	PANBTN_QLOG      = 1,
@@ -2871,3 +2878,10 @@ typedef enum action_id {
 	ACTION_SPELLPLR    = 25,
 	ACTION_SPELLWALL   = 26,
 } action_id;
+
+typedef enum dlrg_flag {
+	DLRG_HDOOR = 0x01,
+	DLRG_VDOOR = 0x02,
+	DLRG_CHAMBER = 0x40,
+	DLRG_PROTECTED = 0x80,
+} dlrg_flag;

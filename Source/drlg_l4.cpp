@@ -1,26 +1,26 @@
 #include "diablo.h"
 
-int diabquad1x; // weak
-int diabquad1y; // weak
-int diabquad3x; // idb
-int diabquad3y; // idb
-int diabquad2x; // idb
-int diabquad2y; // idb
-int diabquad4x; // idb
-int diabquad4y; // idb
+int diabquad1x;
+int diabquad1y;
+int diabquad3x;
+int diabquad3y;
+int diabquad2x;
+int diabquad2y;
+int diabquad4x;
+int diabquad4y;
 BOOL hallok[20];
-int l4holdx; // weak
-int l4holdy; // weak
-int SP4x1;   // idb
-int SP4x2;   // weak
-int SP4y1;   // idb
-int SP4y2;   // weak
-unsigned char L4dungeon[80][80];
-unsigned char dung[20][20];
+int l4holdx;
+int l4holdy;
+int SP4x1;
+int SP4x2;
+int SP4y1;
+int SP4y2;
+BYTE L4dungeon[80][80];
+BYTE dung[20][20];
 //int dword_52A4DC; // weak
 
-const unsigned char L4ConvTbl[16] = { 30u, 6u, 1u, 6u, 2u, 6u, 6u, 6u, 9u, 6u, 1u, 6u, 2u, 6u, 3u, 6u };
-const unsigned char L4USTAIRS[42] = {
+const BYTE L4ConvTbl[16] = { 30u, 6u, 1u, 6u, 2u, 6u, 6u, 6u, 9u, 6u, 1u, 6u, 2u, 6u, 3u, 6u };
+const BYTE L4USTAIRS[42] = {
 	4u,
 	5u,
 	6u,
@@ -64,7 +64,7 @@ const unsigned char L4USTAIRS[42] = {
 	0u,
 	0u
 };
-const unsigned char L4TWARP[42] = {
+const BYTE L4TWARP[42] = {
 	4u,
 	5u,
 	6u,
@@ -108,7 +108,7 @@ const unsigned char L4TWARP[42] = {
 	0u,
 	0u
 };
-const unsigned char L4DSTAIRS[52] = {
+const BYTE L4DSTAIRS[52] = {
 	5u,
 	5u,
 	6u,
@@ -162,7 +162,7 @@ const unsigned char L4DSTAIRS[52] = {
 	0u,
 	0u
 };
-const unsigned char L4PENTA[52] = {
+const BYTE L4PENTA[52] = {
 	5u,
 	5u,
 	6u,
@@ -216,7 +216,7 @@ const unsigned char L4PENTA[52] = {
 	0u,
 	0u
 };
-const unsigned char L4PENTA2[52] = {
+const BYTE L4PENTA2[52] = {
 	5u,
 	5u,
 	6u,
@@ -270,7 +270,7 @@ const unsigned char L4PENTA2[52] = {
 	0u,
 	0u
 };
-const unsigned char L4BTYPES[140] = {
+const BYTE L4BTYPES[140] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
 	10, 11, 12, 13, 14, 15, 16, 17, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -291,16 +291,14 @@ void DRLG_LoadL4SP()
 {
 	setloadflag_2 = 0;
 	if (QuestStatus(QTYPE_WARLRD)) {
-		pSetPiece_2 = (char *)LoadFileInMem("Levels\\L4Data\\Warlord.DUN", 0);
+		pSetPiece_2 = (char *)LoadFileInMem("Levels\\L4Data\\Warlord.DUN", NULL);
 		setloadflag_2 = 1;
 	}
 	if (currlevel == 15 && gbMaxPlayers != 1) {
-		pSetPiece_2 = (char *)LoadFileInMem("Levels\\L4Data\\Vile1.DUN", 0);
+		pSetPiece_2 = (char *)LoadFileInMem("Levels\\L4Data\\Vile1.DUN", NULL);
 		setloadflag_2 = 1;
 	}
 }
-// 5B50D8: using guessed type int setloadflag_2;
-// 679660: using guessed type char gbMaxPlayers;
 
 void DRLG_FreeL4SP()
 {
@@ -310,23 +308,23 @@ void DRLG_FreeL4SP()
 void DRLG_L4SetSPRoom(int rx1, int ry1)
 {
 	int rw, rh, i, j;
-	unsigned char *sp;
+	BYTE *sp;
 
-	rw = (unsigned char)pSetPiece_2[0];
-	rh = (unsigned char)pSetPiece_2[2];
+	rw = (BYTE)pSetPiece_2[0];
+	rh = (BYTE)pSetPiece_2[2];
 
 	setpc_x = rx1;
 	setpc_y = ry1;
 	setpc_w = rw;
 	setpc_h = rh;
 
-	sp = (unsigned char *)&pSetPiece_2[4];
+	sp = (BYTE *)&pSetPiece_2[4];
 
 	for (j = 0; j < rh; j++) {
 		for (i = 0; i < rw; i++) {
 			if (*sp != 0) {
 				dungeon[i + rx1][j + ry1] = *sp;
-				dflags[i + rx1][j + ry1] |= 0x80;
+				dflags[i + rx1][j + ry1] |= DLRG_PROTECTED;
 			} else {
 				dungeon[i + rx1][j + ry1] = 6;
 			}
@@ -334,8 +332,6 @@ void DRLG_L4SetSPRoom(int rx1, int ry1)
 		}
 	}
 }
-// 5CF330: using guessed type int setpc_h;
-// 5CF334: using guessed type int setpc_w;
 
 void L4SaveQuads()
 {
@@ -346,16 +342,14 @@ void L4SaveQuads()
 		x = 0;
 		for (i = 0; i < 14; i++) {
 			dflags[i + l4holdx][j + l4holdy] = 1;
-			dflags[39 - x - l4holdx][j + l4holdy] = 1;
-			dflags[i + l4holdx][39 - y - l4holdy] = 1;
-			dflags[39 - x - l4holdx][39 - y - l4holdy] = 1;
+			dflags[DMAXX - 1 - x - l4holdx][j + l4holdy] = 1;
+			dflags[i + l4holdx][DMAXY - 1 - y - l4holdy] = 1;
+			dflags[DMAXX - 1 - x - l4holdx][DMAXY - 1 - y - l4holdy] = 1;
 			x++;
 		}
 		y++;
 	}
 }
-// 528A34: using guessed type int l4holdx;
-// 528A38: using guessed type int l4holdy;
 
 void DRLG_L4SetRoom(BYTE *pSetPiece, int rx1, int ry1)
 {
@@ -370,7 +364,7 @@ void DRLG_L4SetRoom(BYTE *pSetPiece, int rx1, int ry1)
 		for (i = 0; i < rw; i++) {
 			if (*sp != 0) {
 				dungeon[i + rx1][j + ry1] = *sp;
-				dflags[i + rx1][j + ry1] |= 0x80;
+				dflags[i + rx1][j + ry1] |= DLRG_PROTECTED;
 			} else {
 				dungeon[i + rx1][j + ry1] = 6;
 			}
@@ -383,16 +377,16 @@ void DRLG_LoadDiabQuads(BOOL preflag)
 {
 	BYTE *lpSetPiece;
 
-	lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab1.DUN", 0);
+	lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab1.DUN", NULL);
 	diabquad1x = 4 + l4holdx;
 	diabquad1y = 4 + l4holdy;
 	DRLG_L4SetRoom(lpSetPiece, diabquad1x, diabquad1y);
 	mem_free_dbg(lpSetPiece);
 
 	if (preflag) {
-		lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab2b.DUN", 0);
+		lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab2b.DUN", NULL);
 	} else {
-		lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab2a.DUN", 0);
+		lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab2a.DUN", NULL);
 	}
 	diabquad2x = 27 - l4holdx;
 	diabquad2y = 1 + l4holdy;
@@ -400,9 +394,9 @@ void DRLG_LoadDiabQuads(BOOL preflag)
 	mem_free_dbg(lpSetPiece);
 
 	if (preflag) {
-		lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab3b.DUN", 0);
+		lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab3b.DUN", NULL);
 	} else {
-		lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab3a.DUN", 0);
+		lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab3a.DUN", NULL);
 	}
 	diabquad3x = 1 + l4holdx;
 	diabquad3y = 27 - l4holdy;
@@ -410,9 +404,9 @@ void DRLG_LoadDiabQuads(BOOL preflag)
 	mem_free_dbg(lpSetPiece);
 
 	if (preflag) {
-		lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab4b.DUN", 0);
+		lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab4b.DUN", NULL);
 	} else {
-		lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab4a.DUN", 0);
+		lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab4a.DUN", NULL);
 	}
 	diabquad4x = 28 - l4holdx;
 	diabquad4y = 28 - l4holdy;
@@ -466,8 +460,8 @@ void DRLG_L4GeneralFix()
 {
 	int i, j;
 
-	for (j = 0; j < 39; j++) {
-		for (i = 0; i < 39; i++) {
+	for (j = 0; j < DMAXY - 1; j++) {
+		for (i = 0; i < DMAXX - 1; i++) {
 			if ((dungeon[i][j] == 24 || dungeon[i][j] == 122) && dungeon[i + 1][j] == 2 && dungeon[i][j + 1] == 5) {
 				dungeon[i][j] = 17;
 			}
@@ -475,7 +469,7 @@ void DRLG_L4GeneralFix()
 	}
 }
 
-void CreateL4Dungeon(unsigned int rseed, int entry)
+void CreateL4Dungeon(DWORD rseed, int entry)
 {
 	SetRndSeed(rseed);
 
@@ -653,8 +647,8 @@ void DRLG_L4Shadows()
 	int x, y;
 	BOOL okflag;
 
-	for (y = 1; y < 40; y++) {
-		for (x = 1; x < 40; x++) {
+	for (y = 1; y < DMAXY; y++) {
+		for (x = 1; x < DMAXY; x++) {
 			okflag = FALSE;
 			if (dungeon[x][y] == 3) {
 				okflag = TRUE;
@@ -688,8 +682,8 @@ void InitL4Dungeon()
 	memset(dung, 0, sizeof(dung));
 	memset(L4dungeon, 0, sizeof(L4dungeon));
 
-	for (j = 0; j < 40; j++) {
-		for (i = 0; i < 40; i++) {
+	for (j = 0; j < DMAXY; j++) {
+		for (i = 0; i < DMAXX; i++) {
 			dungeon[i][j] = 30;
 			dflags[i][j] = 0;
 		}
@@ -715,8 +709,8 @@ void L4AddWall()
 {
 	int i, j, x, y;
 
-	for (j = 0; j < 40; j++) {
-		for (i = 0; i < 40; i++) {
+	for (j = 0; j < DMAXY; j++) {
+		for (i = 0; i < DMAXX; i++) {
 			if (dflags[i][j] != 0) {
 				continue;
 			}
@@ -1361,8 +1355,8 @@ void DRLG_L4Subs()
 	int x, y, i, rv;
 	BYTE c;
 
-	for (y = 0; y < 40; y++) {
-		for (x = 0; x < 40; x++) {
+	for (y = 0; y < DMAXY; y++) {
+		for (x = 0; x < DMAXX; x++) {
 			if (random(0, 3) == 0) {
 				c = L4BTYPES[dungeon[x][y]];
 				if (c != 0 && dflags[x][y] == 0) {
@@ -1382,8 +1376,8 @@ void DRLG_L4Subs()
 			}
 		}
 	}
-	for (y = 0; y < 40; y++) {
-		for (x = 0; x < 40; x++) {
+	for (y = 0; y < DMAXY; y++) {
+		for (x = 0; x < DMAXX; x++) {
 			if (random(0, 10) == 0) {
 				if (L4BTYPES[dungeon[x][y]] == 6 && dflags[x][y] == 0) {
 					dungeon[x][y] = random(0, 3) + 95;
@@ -1449,6 +1443,7 @@ void uShape()
 				hallok[j] = FALSE;
 			}
 			if (dung[i][j] == 1) {
+				// BUGFIX: check that i + 1 < 20 and j + 1 < 20
 				if (dung[i][j + 1] == 1 && dung[i + 1][j + 1] == 0) {
 					hallok[j] = TRUE;
 				} else {
@@ -1485,6 +1480,7 @@ void uShape()
 				hallok[i] = FALSE;
 			}
 			if (dung[i][j] == 1) {
+				// BUGFIX: check that i + 1 < 20 and j + 1 < 20
 				if (dung[i + 1][j] == 1 && dung[i + 1][j + 1] == 0) {
 					hallok[i] = TRUE;
 				} else {
@@ -1536,7 +1532,7 @@ long GetArea()
 
 void L4firstRoom()
 {
-	int x, y, w, h, rndx, rndy; /* xmin, xmax, ymin, ymax */
+	int x, y, w, h, rndx, rndy, xmin, xmax, ymin, ymax;
 
 	if (currlevel != 16) {
 		if (currlevel == quests[QTYPE_WARLRD]._qlevel && quests[QTYPE_WARLRD]._qactive) {
@@ -1555,13 +1551,17 @@ void L4firstRoom()
 		h = 14;
 	}
 
-	rndx = random(0, 19 - w - ((20 - w) >> 1) + 1) + ((20 - w) >> 1);
+	xmin = (20 - w) >> 1;
+	xmax = 19 - w;
+	rndx = random(0, xmax - xmin + 1) + xmin;
 	if (rndx + w > 19) {
 		x = 19 - w + 1;
 	} else {
 		x = rndx;
 	}
-	rndy = random(0, 19 - h - ((20 - h) >> 1) + 1) + ((20 - h) >> 1);
+	ymin = (20 - h) >> 1;
+	ymax = 19 - h;
+	rndy = random(0, ymax - ymin + 1) + ymin;
 	if (rndy + h > 19) {
 		y = 19 - h + 1;
 	} else {
@@ -1678,7 +1678,7 @@ BOOL L4checkRoom(int x, int y, int width, int height)
 	return TRUE;
 }
 
-BOOL DRLG_L4PlaceMiniSet(const unsigned char *miniset, int tmin, int tmax, int cx, int cy, BOOL setview, int ldir)
+BOOL DRLG_L4PlaceMiniSet(const BYTE *miniset, int tmin, int tmax, int cx, int cy, BOOL setview, int ldir)
 {
 	int sx, sy, sw, sh, xx, yy, i, ii, numt, bailcnt;
 	BOOL found;
@@ -1693,8 +1693,8 @@ BOOL DRLG_L4PlaceMiniSet(const unsigned char *miniset, int tmin, int tmax, int c
 	}
 
 	for (i = 0; i < numt; i++) {
-		sx = random(0, 40 - sw);
-		sy = random(0, 40 - sh);
+		sx = random(0, DMAXX - sw);
+		sy = random(0, DMAXY - sh);
 		found = FALSE;
 		for (bailcnt = 0; !found && bailcnt < 200; bailcnt++) {
 			found = TRUE;
@@ -1702,13 +1702,13 @@ BOOL DRLG_L4PlaceMiniSet(const unsigned char *miniset, int tmin, int tmax, int c
 				found = FALSE;
 			}
 			if (cx != -1 && sx >= cx - sw && sx <= cx + 12) {
-				sx = random(0, 40 - sw);
-				sy = random(0, 40 - sh);
+				sx = random(0, DMAXX - sw);
+				sy = random(0, DMAXY - sh);
 				found = FALSE;
 			}
 			if (cy != -1 && sy >= cy - sh && sy <= cy + 12) {
-				sx = random(0, 40 - sw);
-				sy = random(0, 40 - sh);
+				sx = random(0, DMAXX - sw);
+				sy = random(0, DMAXY - sh);
 				found = FALSE;
 			}
 			ii = 2;
@@ -1725,10 +1725,10 @@ BOOL DRLG_L4PlaceMiniSet(const unsigned char *miniset, int tmin, int tmax, int c
 			}
 			if (!found) {
 				sx++;
-				if (sx == 40 - sw) {
+				if (sx == DMAXX - sw) {
 					sx = 0;
 					sy++;
-					if (sy == 40 - sh) {
+					if (sy == DMAXY - sh) {
 						sy = 0;
 					}
 				}

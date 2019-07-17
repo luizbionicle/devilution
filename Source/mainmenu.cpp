@@ -18,10 +18,10 @@ void mainmenu_refresh_music()
 	} while (!menu_music_track_id || menu_music_track_id == 1);
 }
 
-void __stdcall mainmenu_create_hero(int arg1, int arg2, int arg3, int arg4, char *name_1, char *name_2)
+void __stdcall mainmenu_change_name(int arg1, int arg2, int arg3, int arg4, char *name_1, char *name_2)
 {
 	if (UiValidPlayerName(name_2))
-		pfile_create_save_file(name_1, name_2);
+		pfile_rename_hero(name_1, name_2);
 }
 
 int __stdcall mainmenu_select_hero_dialog(
@@ -35,7 +35,7 @@ int __stdcall mainmenu_select_hero_dialog(
     BOOL *multi)
 {
 	BOOL hero_is_created = TRUE;
-	int dlgresult = 0;
+	int dlgresult = NEW_GAME;
 	if (gbMaxPlayers == 1) {
 		if (!UiSelHeroSingDialog(
 		        pfile_ui_set_hero_infos,
@@ -47,7 +47,7 @@ int __stdcall mainmenu_select_hero_dialog(
 		        &gnDifficulty))
 			app_fatal("Unable to display SelHeroSing");
 
-		if (dlgresult == 2)
+		if (dlgresult == LOAD_GAME)
 			gbLoadGame = TRUE;
 		else
 			gbLoadGame = FALSE;
@@ -62,7 +62,7 @@ int __stdcall mainmenu_select_hero_dialog(
 	               gszHero)) {
 		app_fatal("Can't load multiplayer dialog");
 	}
-	if (dlgresult == 4) {
+	if (dlgresult == EXIT_MENU) {
 		SErrSetLastError(1223);
 		return 0;
 	}
